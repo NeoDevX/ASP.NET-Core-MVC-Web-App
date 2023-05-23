@@ -122,5 +122,22 @@ namespace WebApp.Controllers
             _dataUpdater.Update(updatedClub);
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var club = await _dataProvider.GetClubBy(id);
+            return club == null ? View("Error") : View(club);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteClub(int id)
+        {
+            var club = await _dataProvider.GetClubBy(id);
+            if (club == null)
+                return View("Error");
+
+            _dataUpdater.Delete(club);
+            return RedirectToAction("Index");
+        }
     }
 }

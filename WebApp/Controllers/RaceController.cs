@@ -122,5 +122,23 @@ namespace WebApp.Controllers
             _dataUpdater.Update(updatedRace);
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var race = await _dataProvider.GetRaceBy(id);
+            return race == null ? View("Error") : View(race);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteRace(int id)
+        {
+            var race = await _dataProvider.GetRaceBy(id);
+
+            if (race == null)
+                return View("Error");
+
+            _dataUpdater.Delete(race);
+            return RedirectToAction("Index");
+        }
     }
 }   

@@ -1,5 +1,5 @@
 ﻿@{
-  ViewBag.Title = Model.Title;
+  ViewBag.Title = Model.Title ?? "Race Detail";
   Layout = "_Layout";
 }
 
@@ -20,9 +20,9 @@
       <p>@Model.Description</p>
       <h3 class="my-3">Location</h3>
       <ul>
-        <li>@Model.Address.State</li>
-        <li>@Model.Address.City</li>
-        <li>@Model.Address.Street</li>
+        <li>@Model.Address?.State</li>
+        <li>@Model.Address?.City</li>
+        <li>@Model.Address?.Street</li>
       </ul>
     </div>
   </div>
