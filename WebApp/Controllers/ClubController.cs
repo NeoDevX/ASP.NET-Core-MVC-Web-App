@@ -1,8 +1,8 @@
-﻿#pragma warning disable 1998
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.Services.Data;
 using WebApp.Services.Image;
@@ -15,12 +15,15 @@ namespace WebApp.Controllers
         private readonly IDataProvider _dataProvider;
         private readonly IDataUpdater _dataUpdater;
         private readonly IImageService _imageService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ClubController(IDataProvider dataProvider, IDataUpdater dataUpdater, IImageService imageService)
+        public ClubController(IDataProvider dataProvider, IDataUpdater dataUpdater, IImageService imageService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _dataProvider = dataProvider;
             _dataUpdater = dataUpdater;
             _imageService = imageService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -35,21 +38,27 @@ namespace WebApp.Controllers
             return View(club);
         }
 
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            string userId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var clubViewModel = new CreateClubViewModel {AppUserId = userId};
+            return View(clubViewModel);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateClubViewModel clubViewModel)
         {
-            if (ModelState.IsValid == false) 
+            if (ModelState.IsValid == false)
                 ModelState.AddModelError("CreateClubError", "Failed to Create Club");
 
-            var result = await _imageService.AddImage(clubViewModel.Image); 
+            var result = await _imageService.AddImage(clubViewModel.Image);
             var club = new Club
             {
                 Title = clubViewModel.Title,
                 Description = clubViewModel.Description,
                 ClubCategory = clubViewModel.ClubCategory,
                 Image = result?.Url.ToString(),
+                AppUserId = clubViewModel.AppUserId,
                 Address = new Address
                 {
                     State = clubViewModel.Address.State,
@@ -57,15 +66,15 @@ namespace WebApp.Controllers
                     Street = clubViewModel.Address.Street
                 }
             };
-            
+
             _dataUpdater.Add(club);
             return RedirectToAction("Index");
         }
-        
+
         public async Task<IActionResult> Edit(int id)
         {
             var club = await _dataProvider.GetClubBy(id);
-        
+
             if (club == null)
                 return View("Error");
 
@@ -84,8 +93,8 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, EditClubViewModel clubViewModel)
         {
-            var club = await _dataProvider.GetClubBy(id, true); 
-            
+            var club = await _dataProvider.GetClubBy(id, true);
+
             if (ModelState.IsValid == false || club == null)
             {
                 ModelState.AddModelError("EditClubError", "Failed to Edit Club");
@@ -113,9 +122,9 @@ namespace WebApp.Controllers
                 Image = result?.Url.ToString(),
                 Address = new Address
                 {
-                    State = clubViewModel.Address.State,
-                    City = clubViewModel.Address.City,
-                    Street = clubViewModel.Address.Street
+                    State = clubViewModel.Address?.State,
+                    City = clubViewModel.Address?.City,
+                    Street = clubViewModel.Address?.Street
                 }
             };
 
@@ -129,7 +138,7 @@ namespace WebApp.Controllers
             return club == null ? View("Error") : View(club);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         public async Task<IActionResult> DeleteClub(int id)
         {
             var club = await _dataProvider.GetClubBy(id);

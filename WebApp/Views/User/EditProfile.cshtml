@@ -1,0 +1,42 @@
+﻿@model WebApp.ViewModel.EditProfileViewModel
+
+@{
+  ViewBag.Title = "Edit profile";
+  Layout = "_Layout";
+}
+
+<form method="post" asp-action="EditProfile" enctype="multipart/form-data">
+  <input type="hidden" value="AddressId" id="AddressId"/>
+  <div class="mb-3">
+    <label asp-for="Mileage">Mileage</label>
+    <input asp-for="Mileage" class="form-control" placeholder="Mileage">
+    <span asp-validation-for="Mileage" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label asp-for="Pace">Pace</label>
+    <input asp-for="Pace" class="form-control" placeholder="Pace">
+    <span asp-validation-for="Pace" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label asp-for="Address.Street">Street</label>
+    <input asp-for="Address.Street" class="form-control" placeholder="Street">
+    <span asp-validation-for="Address.Street" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label asp-for="Address.City">City</label>
+    <input asp-for="Address.City" class="form-control" placeholder="City">
+    <span asp-validation-for="Address.Street" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label asp-for="Address.State">State</label>
+    <input asp-for="Address.State" class="form-control" placeholder="State">
+    <span asp-validation-for="Address.State" class="text-danger"></span>
+  </div>
+  <div class="mb-3">
+    <label asp-for="Image">Profile image</label>
+    <input asp-for="Image" type="file" class="form-control" placeholder="ProfileImageUrl">
+    <span asp-validation-for="Image" class="text-danger"></span>
+
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

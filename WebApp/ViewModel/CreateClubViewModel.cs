@@ -7,8 +7,9 @@ namespace WebApp.ViewModel
     {
         public string Title { get; init; }
         public string Description { get; init; }
-        public IFormFile Image { get; init; }
+        public IFormFile? Image { get; init; }
         public Address Address { get; init; }
         public ClubCategory ClubCategory { get; init; }
+        public string AppUserId { get; init; }
     }
 }

@@ -6,6 +6,7 @@
 @model WebApp.ViewModel.CreateClubViewModel
 
 <form method="post" asp-action="Create" enctype="multipart/form-data">
+  <input type="hidden" id="AddressId" name="AppUserId" asp-for="AppUserId">
   <div class="mb-3">
     <label asp-for="Title" class="form-label">Title</label>
     <input asp-for="Title" class="form-control" placeholder="Title">
@@ -38,10 +39,10 @@
     <input asp-for="Address.Street" class="form-control" placeholder="Street">
     <span asp-validation-for="Address.Street" class="text-danger"></span>
   </div>
-    <div class="mb-3">
-      <label asp-for="Image" class="form-label">Image</label>
-      <input asp-for="Image" class="form-control" type="file" placeholder="Image">
-      <span asp-validation-for="Image" class="text-danger"></span>
-    </div>
+  <div class="mb-3">
+    <label asp-for="Image" class="form-label">Image</label>
+    <input asp-for="Image" class="form-control" type="file" placeholder="Image">
+    <span asp-validation-for="Image" class="text-danger"></span>
+  </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

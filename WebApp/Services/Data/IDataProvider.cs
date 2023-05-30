@@ -10,5 +10,7 @@ namespace WebApp.Services.Data
         Task<Club> GetClubBy(int id, bool noTracking = false);
         Task<IEnumerable<Race>> GetRaces();
         Task<Race> GetRaceBy(int id, bool noTracking = false);
+        Task<IEnumerable<AppUser>> GetAllUsers();
+        Task<AppUser> GetUserBy(string id, bool noTracking = false);
     }
 }

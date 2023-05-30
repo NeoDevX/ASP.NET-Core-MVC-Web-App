@@ -1,8 +1,8 @@
-﻿#pragma warning disable 1998
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Extensions;
 using WebApp.Models;
 using WebApp.Services.Data;
 using WebApp.Services.Image;
@@ -15,12 +15,14 @@ namespace WebApp.Controllers
         private readonly IDataProvider _dataProvider;
         private readonly IDataUpdater _dataUpdater;
         private readonly IImageService _imageService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RaceController(IDataProvider dataProvider, IDataUpdater dataUpdater, IImageService imageService)
+        public RaceController(IDataProvider dataProvider, IDataUpdater dataUpdater, IImageService imageService, IHttpContextAccessor httpContextAccessor)
         {
             _dataProvider = dataProvider;
             _dataUpdater = dataUpdater;
             _imageService = imageService;
+            _httpContextAccessor = httpContextAccessor;
         }
         
         public async Task<IActionResult> Index()
@@ -35,8 +37,13 @@ namespace WebApp.Controllers
             return View(race);
         }
 
-        public IActionResult Create() => View();
-        
+        public IActionResult Create()
+        {
+            string userId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var raceViewModel = new CreateRaceViewModel {AppUserId = userId};
+            return View(raceViewModel);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateRaceViewModel raceViewModel)
         {
@@ -49,6 +56,7 @@ namespace WebApp.Controllers
                 Title = raceViewModel.Title,
                 Description = raceViewModel.Description,
                 RaceCategory = raceViewModel.RaceCategory,
+                AppUserId = raceViewModel.AppUserId,
                 Address = new Address
                 {
                     State = raceViewModel.Address.State,
@@ -129,7 +137,7 @@ namespace WebApp.Controllers
             return race == null ? View("Error") : View(race);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         public async Task<IActionResult> DeleteRace(int id)
         {
             var race = await _dataProvider.GetRaceBy(id);

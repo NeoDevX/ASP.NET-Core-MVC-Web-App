@@ -50,5 +50,22 @@ namespace WebApp.Services.Data
                    .FirstOrDefaultAsync(race => race.Id == id) 
                    ?? throw new NullReferenceException();
         }
+
+        public async Task<IEnumerable<AppUser>> GetAllUsers() => await _dataContext.Users.ToListAsync();
+
+        public async Task<AppUser> GetUserBy(string id, bool noTracking = false)
+        {
+            if (noTracking)
+                return await _dataContext.Users
+                    .Include(user => user.Address)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(user => user.Id == id)
+                       ?? throw new NullReferenceException();
+
+            return await _dataContext.Users
+                .Include(user => user.Address)
+                .FirstOrDefaultAsync(user => user.Id == id)
+                ?? throw new NullReferenceException();
+        }
     }
 }

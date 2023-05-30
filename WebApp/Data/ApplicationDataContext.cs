@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using WebApp.Models;
 
 namespace WebApp.Data
 {
-    public class ApplicationDataContext : DbContext
+    public class ApplicationDataContext : IdentityDbContext<AppUser>
     {
         public ApplicationDataContext(DbContextOptions context) : base(context) { }
 
